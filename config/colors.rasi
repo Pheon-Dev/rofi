@@ -15,4 +15,7 @@
     selected:       #545C7E;
     active:         #B8BB26;
     urgent:         #FB4934;
+    accent:         #00BC04;
+	background-selection:#e34039; 		//Selection_bg
+	transparent:					#ffffff00;
 }

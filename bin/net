@@ -38,11 +38,11 @@ function wireless_interface_state() {
 	[[ ${#WIRELESS_INTERFACES[@]} -eq "0" ]] || {
 		ACTIVE_SSID=$(nmcli device status | grep "^${WIRELESS_INTERFACES[WLAN_INT]}." | awk '{print $4}')
 		WIFI_CON_STATE=$(nmcli device status | grep "^${WIRELESS_INTERFACES[WLAN_INT]}." | awk '{print $3}')
-		{ [[ "$WIFI_CON_STATE" == "unavailable" ]] && WIFI_LIST="***Wi-Fi Disabled***" && WIFI_SWITCH="~Wi-Fi On" && OPTIONS="${WIFI_LIST}\n${WIFI_SWITCH}\n~Scan\n"; } || { [[ "$WIFI_CON_STATE" =~ "connected" ]] && {
+		{ [[ "$WIFI_CON_STATE" == "unavailable" ]] && WIFI_LIST="───Wi-Fi Disabled───" && WIFI_SWITCH="蘒 Wi-Fi On" && OPTIONS="${WIFI_LIST}\n${WIFI_SWITCH}\n蘒 Scan\n"; } || { [[ "$WIFI_CON_STATE" =~ "connected" ]] && {
 			PROMPT=${WIRELESS_INTERFACES_PRODUCT[WLAN_INT]}[${WIRELESS_INTERFACES[WLAN_INT]}]
 			WIFI_LIST=$(nmcli --fields SSID,SECURITY,BARS device wifi list  ifname "${WIRELESS_INTERFACES[WLAN_INT]}")
 			wifi_list
-			[[ "$ACTIVE_SSID" == "--" ]] && WIFI_SWITCH="~Scan\n~Manual/Hidden\n~Wi-Fi Off" || WIFI_SWITCH="~Scan\n~Disconnect\n~Manual/Hidden\n~Wi-Fi Off"
+			[[ "$ACTIVE_SSID" == "--" ]] && WIFI_SWITCH="蘒 Scan\n蘒 Manual/Hidden\n蘒 Wi-Fi Off" || WIFI_SWITCH="蘒 Scan\n蘒 Disconnect\n蘒 Manual/Hidden\n蘒 Wi-Fi Off"
 			OPTIONS="${WIFI_LIST}\n${WIFI_SWITCH}\n"
 		}; }
 	}
@@ -50,12 +50,12 @@ function wireless_interface_state() {
 function ethernet_interface_state() {
 	[[ ${#WIRED_INTERFACES[@]} -eq "0" ]] || {
 		WIRED_CON_STATE=$(nmcli device status | grep "ethernet" | head -1 | awk '{print $3}')
-		{ [[ "$WIRED_CON_STATE" == "disconnected" ]] && WIRED_SWITCH="~Eth On"; } || { [[ "$WIRED_CON_STATE" == "connected" ]] && WIRED_SWITCH="~Eth Off"; } || { [[ "$WIRED_CON_STATE" == "unavailable" ]] && WIRED_SWITCH="***Wired Unavailable***"; } || { [[ "$WIRED_CON_STATE" == "connecting" ]] && WIRED_SWITCH="***Wired Initializing***"; }
+		{ [[ "$WIRED_CON_STATE" == "disconnected" ]] && WIRED_SWITCH="蘒 Eth On"; } || { [[ "$WIRED_CON_STATE" == "connected" ]] && WIRED_SWITCH="蘒 Eth Off"; } || { [[ "$WIRED_CON_STATE" == "unavailable" ]] && WIRED_SWITCH="───Wired Unavailable───"; } || { [[ "$WIRED_CON_STATE" == "connecting" ]] && WIRED_SWITCH="───Wired Initializing───"; }
 		OPTIONS="${OPTIONS}${WIRED_SWITCH}\n"
 	}
 }
 function rofi_menu() {
-	{ [[ ${#WIRELESS_INTERFACES[@]} -gt "1" ]] && OPTIONS="${OPTIONS}~Change Wifi Interface\n~More Options"; } || { OPTIONS="${OPTIONS}~More Options"; }
+	{ [[ ${#WIRELESS_INTERFACES[@]} -gt "1" ]] && OPTIONS="${OPTIONS}蘒 Change Wifi Interface\n蘒 More Options"; } || { OPTIONS="${OPTIONS}蘒 More Options"; }
 	{ [[ "$WIRED_CON_STATE" == "connected" ]] && PROMPT="${WIRED_INTERFACES_PRODUCT}[$WIRED_INTERFACES]"; } || PROMPT="${WIRELESS_INTERFACES_PRODUCT[WLAN_INT]}[${WIRELESS_INTERFACES[WLAN_INT]}]"
 	SELECTION=$(echo -e "$OPTIONS" | rofi_cmd "$OPTIONS" $WIDTH_FIX_MAIN "-a 0")
 	SSID=$(echo "$SELECTION" | sed "s/\s\{2,\}/\|/g" | awk -F "|" '{print $1}')
@@ -151,7 +151,7 @@ function interface_status() {
 	for i in "${!INTERFACES[@]}"; do
 		CON_STATE=$(nmcli device status | grep "^${INTERFACES[$i]}." | awk '{print $3}')
 		INT_NAME=${INTERFACES_PRODUCT[$i]}[${INTERFACES[$i]}]
-		[[ "$CON_STATE" == "connected" ]] && STATUS="$INT_NAME:\n\t$(nmcli -t -f GENERAL.CONNECTION dev show "${INTERFACES[$i]}" | awk -F '[:]' '{print $2}') ~ $(nmcli -t -f IP4.ADDRESS dev show "${INTERFACES[$i]}" | awk -F '[:/]' '{print $2}')" || STATUS="$INT_NAME: ${CON_STATE^}"
+		[[ "$CON_STATE" == "connected" ]] && STATUS="$INT_NAME:\n\t$(nmcli -t -f GENERAL.CONNECTION dev show "${INTERFACES[$i]}" | awk -F '[:]' '{print $2}') 蘒  $(nmcli -t -f IP4.ADDRESS dev show "${INTERFACES[$i]}" | awk -F '[:/]' '{print $2}')" || STATUS="$INT_NAME: ${CON_STATE^}"
 		echo -e "${STATUS}"
 	done
 }
@@ -167,7 +167,7 @@ function share_pass() {
 	SSID=$(nmcli dev wifi show-password | grep -oP '(?<=SSID: ).*' | head -1)
 	PASSWORD=$(nmcli dev wifi show-password | grep -oP '(?<=Password: ).*' | head -1)
 	OPTIONS="SSID: ${SSID}\nPassword: ${PASSWORD}"
-	[[ -x "$(command -v qrencode)" ]] && OPTIONS="${OPTIONS}\n~QrCode"
+	[[ -x "$(command -v qrencode)" ]] && OPTIONS="${OPTIONS}\n蘒 QrCode"
 	SELECTION=$(echo -e "$OPTIONS" | rofi_cmd "$OPTIONS" $WIDTH_FIX_STATUS "-a -1" "mainbox{children:[listview];}")
 	selection_action
 }
@@ -179,14 +179,14 @@ function gen_qrcode() {
 	background-image:url(\"$QRCODE_DIR$TMP_SSID.png\",both);}"
 }
 function manual_hidden() {
-	OPTIONS="~Manual\n~Hidden" && SELECTION=$(echo -e "$OPTIONS" | rofi_cmd "$OPTIONS" $WIDTH_FIX_STATUS "" "mainbox{children:[listview];}")
+	OPTIONS="蘒 Manual\n蘒 Hidden" && SELECTION=$(echo -e "$OPTIONS" | rofi_cmd "$OPTIONS" $WIDTH_FIX_STATUS "" "mainbox{children:[listview];}")
 	selection_action
 }
 function vpn() {
 	ACTIVE_VPN=$(nmcli -g NAME,TYPE con show --active | awk '/:'$VPN_PATTERN'/ {sub(/:'$VPN_PATTERN'.*/, ""); print}')
-	[[ $ACTIVE_VPN ]] && OPTIONS="~Deactive $ACTIVE_VPN" || OPTIONS="$(nmcli -g NAME,TYPE connection | awk '/:'$VPN_PATTERN'/ {sub(/:'$VPN_PATTERN'.*/, ""); print}')"
+	[[ $ACTIVE_VPN ]] && OPTIONS="蘒 Deactive $ACTIVE_VPN" || OPTIONS="$(nmcli -g NAME,TYPE connection | awk '/:'$VPN_PATTERN'/ {sub(/:'$VPN_PATTERN'.*/, ""); print}')"
 	VPN_ACTION=$(echo -e "$OPTIONS" | rofi_cmd "$OPTIONS" "$WIDTH_FIX_STATUS" "" "mainbox {children:[listview];}")
-	[[ -n "$VPN_ACTION" ]] && { { [[ "$VPN_ACTION" =~ "~Deactive" ]] && nmcli connection down "$ACTIVE_VPN" && notification "VPN_Deactivated" "$ACTIVE_VPN"; } || {
+	[[ -n "$VPN_ACTION" ]] && { { [[ "$VPN_ACTION" =~ "蘒 Deactive" ]] && nmcli connection down "$ACTIVE_VPN" && notification "VPN_Deactivated" "$ACTIVE_VPN"; } || {
 	        notification "-t 0 Activating_VPN" "$VPN_ACTION"
                 VPN_OUTPUT=$(nmcli connection up "$VPN_ACTION" 2>/dev/null)
 		{ [[ $(echo "$VPN_OUTPUT" | grep -c "Connection successfully activated") -eq "1" ]] && notification "VPN_Successfully_Activated" "$VPN_ACTION"; } || notification "Error_Activating_VPN" "Check your configuration for $VPN_ACTION"
@@ -194,35 +194,35 @@ function vpn() {
 }
 function more_options() {
 	OPTIONS=""
-	[[ "$WIFI_CON_STATE" == "connected" ]] && OPTIONS="~Share Wifi Password\n"
-	OPTIONS="${OPTIONS}~Status\n~Restart Network"
-	[[ $(nmcli -g NAME,TYPE connection | awk '/:'$VPN_PATTERN'/ {sub(/:'$VPN_PATTERN'.*/, ""); print}') ]] && OPTIONS="${OPTIONS}\n~VPN"
-	[[ -x "$(command -v nm-connection-editor)" ]] && OPTIONS="${OPTIONS}\n~Open Connection Editor"
+	[[ "$WIFI_CON_STATE" == "connected" ]] && OPTIONS="蘒 Share Wifi Password\n"
+	OPTIONS="${OPTIONS}蘒 Status\n蘒 Restart Network"
+	[[ $(nmcli -g NAME,TYPE connection | awk '/:'$VPN_PATTERN'/ {sub(/:'$VPN_PATTERN'.*/, ""); print}') ]] && OPTIONS="${OPTIONS}\n蘒 VPN"
+	[[ -x "$(command -v nm-connection-editor)" ]] && OPTIONS="${OPTIONS}\n蘒 Open Connection Editor"
 	SELECTION=$(echo -e "$OPTIONS" | rofi_cmd "$OPTIONS" "$WIDTH_FIX_STATUS" "" "mainbox {children:[listview];}")
 	selection_action
 }
 function selection_action() {
 	case "$SELECTION" in
-	"~Disconnect") disconnect "Connection_Terminated" ;;
-	"~Scan") scan ;;
-	"~Status") status ;;
-	"~Share Wifi Password") share_pass ;;
-	"~Manual/Hidden") manual_hidden ;;
-	"~Manual") ssid_manual ;;
-	"~Hidden") ssid_hidden ;;
-	"~Wi-Fi On") change_wifi_state "Wi-Fi" "Enabling Wi-Fi connection" "on" ;;
-	"~Wi-Fi Off") change_wifi_state "Wi-Fi" "Disabling Wi-Fi connection" "off" ;;
-	"~Eth Off") change_wired_state "Ethernet" "Disabling Wired connection" "disconnect" "${WIRED_INTERFACES}" ;;
-	"~Eth On") change_wired_state "Ethernet" "Enabling Wired connection" "connect" "${WIRED_INTERFACES}" ;;
-	"***Wi-Fi Disabled***") ;;
-	"***Wired Unavailable***") ;;
-	"***Wired Initializing***") ;;
-	"~Change Wifi Interface") change_wireless_interface ;;
-	"~Restart Network") net_restart "Network" "Restarting Network" ;;
-	"~QrCode") gen_qrcode ;;
-	"~More Options") more_options ;;
-	"~Open Connection Editor") nm-connection-editor ;;
-	"~VPN") vpn ;;
+	"蘒 Disconnect") disconnect "Connection_Terminated" ;;
+	"蘒 Scan") scan ;;
+	"蘒 Status") status ;;
+	"蘒 Share Wifi Password") share_pass ;;
+	"蘒 Manual/Hidden") manual_hidden ;;
+	"蘒 Manual") ssid_manual ;;
+	"蘒 Hidden") ssid_hidden ;;
+	"蘒 Wi-Fi On") change_wifi_state "Wi-Fi" "Enabling Wi-Fi connection" "on" ;;
+	"蘒 Wi-Fi Off") change_wifi_state "Wi-Fi" "Disabling Wi-Fi connection" "off" ;;
+	"蘒 Eth Off") change_wired_state "Ethernet" "Disabling Wired connection" "disconnect" "${WIRED_INTERFACES}" ;;
+	"蘒 Eth On") change_wired_state "Ethernet" "Enabling Wired connection" "connect" "${WIRED_INTERFACES}" ;;
+	"───Wi-Fi Disabled───") ;;
+	"───Wired Unavailable───") ;;
+	"───Wired Initializing───") ;;
+	"蘒 Change Wifi Interface") change_wireless_interface ;;
+	"蘒 Restart Network") net_restart "Network" "Restarting Network" ;;
+	"蘒 QrCode") gen_qrcode ;;
+	"蘒 More Options") more_options ;;
+	"蘒 Open Connection Editor") nm-connection-editor ;;
+	"蘒 VPN") vpn ;;
 	*)
 		[[ -n "$SELECTION" ]] && [[ "$WIFI_LIST" =~ .*"$SELECTION".* ]] && {
 			[[ "$SSID" == "*" ]] && SSID=$(echo "$SELECTION" | sed "s/\s\{2,\}/\|/g " | awk -F "|" '{print $3}')
