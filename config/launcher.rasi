@@ -18,7 +18,8 @@ text-color:                     @FG;
 border:                         2px;
 border-color:                   @BDR;
 border-radius:                  5px;
-width:                          450px;
+width:                          50%;
+height:                          50%;
 anchor:                         center;
 x-offset:                       0;
 y-offset:                       -50;
@@ -38,7 +39,7 @@ textbox-prompt-colon {
   background-color:               @SEL;
   text-color:                     @FG;
   padding:                        8px 12px 8px 12px;
-  font:			                "Fira Code Nerd Font 10";
+  font:			                "JetBrainsMono Nerd Font 12";
 }
 
 entry {
@@ -51,7 +52,6 @@ entry {
   blink:                          true;
   border:                  	    0px 0px 2px 0px;
   border-color:                   @BDR;
-  border-radius:                  10px;
   padding:                        8px;
 }
 
