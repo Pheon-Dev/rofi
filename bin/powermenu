@@ -56,7 +56,7 @@ case $chosen in
     $shutdown)
 		ans=$(rdialog &)
 		if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
-			systemctl poweroff
+			sudo systemctl poweroff
 		elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
 			exit
         else
@@ -66,7 +66,7 @@ case $chosen in
     $reboot)
 		ans=$(rdialog &)
 		if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
-			systemctl reboot
+			sudo systemctl reboot
 		elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
 			exit
         else
@@ -82,7 +82,7 @@ case $chosen in
 			mpc -q pause
 			amixer set Master mute
 			sh $HOME/.local/bin/lock
-			systemctl suspend
+			sudo systemctl suspend
 		elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
 			exit
         else
